@@ -1,0 +1,85 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  targetNamespace: "radon.blueprints.examples"
+topology_template:
+  node_templates:
+    PublishGridFtp_0:
+      type: radon.nodes.datapipeline.destination.PublishGridFtp
+      metadata:
+        x: "1009"
+        y: "183"
+        displayName: "PublishGridFtp"
+      properties:
+        gridftp_port: 2811
+        intermediate_folder: "/tmp/nifi_gridftp_subscribe/"
+        schedulingStrategy: "EVENT_DRIVEN"
+        schedulingPeriodCRON: "* * * * * ?"
+        name: "sendTogridFTP"
+        gridftp_user: "pelle"
+        gridftp_host: "sodalite-fe.hlrs.de"
+        gridftp_cert_path: "/tmp/gridftp_certs/"
+        gridftp_directory: "~/gridftp_input/"
+      requirements:
+        - host:
+            node: Nifi_0
+            relationship: con_HostedOn_2
+            capability: host
+    ConsS3Bucket_0:
+      type: radon.nodes.datapipeline.source.ConsS3Bucket
+      metadata:
+        x: "327"
+        y: "178"
+        displayName: "ConsS3Bucket"
+      properties:
+        BucketName: "radon-jakovits"
+        cred_file_path: "/home/jakovits/aws/credentials"
+        schedulingStrategy: "EVENT_DRIVEN"
+        schedulingPeriodCRON: "* * * * * ?"
+        name: "listenFromS3"
+        Region: "eu-central-1"
+      requirements:
+        - connectToPipeline:
+            node: PublishGridFtp_0
+            relationship: con_ConnectNifiLocal_0
+            capability: ConnectToPipeline
+        - host:
+            node: Nifi_0
+            relationship: con_HostedOn_1
+            capability: host
+    OpenStack_0:
+      type: radon.nodes.VM.OpenStack
+      metadata:
+        x: "673"
+        y: "699"
+        displayName: "OpenStack"
+      properties:
+        flavor: "6b254b9e-db1c-40de-994c-07d69dd732a6"
+        key_name: "jakovits_ldpc"
+        image: "13a94b11-98ee-43a4-ad29-00ae97e8f790"
+        ssh_username: "centos"
+        name: "nifihost3"
+        network: "provider_64_net"
+    Nifi_0:
+      type: radon.nodes.nifi.Nifi
+      metadata:
+        x: "666"
+        y: "378"
+        displayName: "Nifi"
+      properties:
+        port: 8080
+        component_version: "1.13.0"
+      requirements:
+        - host:
+            node: OpenStack_0
+            relationship: con_HostedOn_0
+            capability: host
+  relationship_templates:
+    con_HostedOn_2:
+      type: tosca.relationships.HostedOn
+    con_HostedOn_0:
+      type: tosca.relationships.HostedOn
+    con_HostedOn_1:
+      type: tosca.relationships.HostedOn
+    con_ConnectNifiLocal_0:
+      type: radon.relationships.datapipeline.ConnectNifiLocal
