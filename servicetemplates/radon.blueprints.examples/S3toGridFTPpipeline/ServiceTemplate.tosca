@@ -18,7 +18,7 @@ topology_template:
         name: "sendTogridFTP"
         gridftp_user: "pelle"
         gridftp_host: "sodalite-fe.hlrs.de"
-        gridftp_cert_path: "/tmp/gridftp_certs/"
+        gridftp_cert_path: "/home/jakovits/.globus"
         gridftp_directory: "~/gridftp_input/"
       requirements:
         - host:

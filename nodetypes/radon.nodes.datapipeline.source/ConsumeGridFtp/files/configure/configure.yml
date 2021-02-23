@@ -41,13 +41,12 @@
         url: "http://localhost:8080/nifi-api/process-groups/{{pipeline_id}}/processors"
         method: Get
       register: nifi_resources
-      when: cred_file_path != "none" or cred_file_path != "None"
 
 
 
     - name: Configure the ExecuteProcess process group
       vars:
-        first_prcsr_id: "{{ nifi_resources.json  | to_json | from_json | json_query(get_id1) }}"
+        first_prcsr_id: "{{ nifi_resources.json  | to_json | from_json | json_query(get_id1)| first }}"
       uri:
         url: "http://localhost:8080/nifi-api/processors/{{first_prcsr_id}}"
         method: PUT
@@ -64,7 +63,7 @@
 
     - name: Configure the ListFile processor within the process group
       vars:       
-        second_prcsr_id: "{{ nifi_resources.json  | to_json | from_json | json_query(get_id2) }}"
+        second_prcsr_id: "{{ nifi_resources.json  | to_json | from_json | json_query(get_id2)| first }}"
       uri:
         url: "http://localhost:8080/nifi-api/processors/{{second_prcsr_id}}"
         method: PUT
@@ -74,7 +73,7 @@
             "id": "{{second_prcsr_id}}"
             "config": 
               "properties": {  
-                 "properties": { "Input Directory": "{{intermediate_folder}}"}
+                 "Input Directory": "{{intermediate_folder}}",
               }                       
         status_code: 200
         body_format: json

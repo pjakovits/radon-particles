@@ -18,7 +18,7 @@ topology_template:
         name: "receieveFromGFTP"
         gridftp_user: "pelle"
         gridftp_host: "gridftpserver.com"
-        gridftp_cert_path: "/tmp/gridftp_certs/"
+        gridftp_cert_path: "/home/jakovits/.globus"
         gridftp_directory: "~/gridftp_output/"
       requirements:
         - connectToPipeline:

@@ -12,6 +12,31 @@ node_types:
         description: name of the template
         type: string
         default: "GridFTPpublish"
+    properties:
+      gridftp_port:
+        type: string
+        description: port of the gridftp server
+        default: 2811
+      intermediate_folder:
+        type: string
+        description: Where the data pipeline server keeps intermediate data. MUST be unique folder.
+        default: "/tmp/nifi_gridftp_subscribe/"
+      gridftp_user:
+        type: string
+        description: user of the gridftp server
+        default: "pelle"
+      gridftp_host:
+        type: string
+        description: hostname of the gridftp server
+        default: "gridftpserver.com"
+      gridftp_cert_path:
+        type: string
+        description: where the orchestrator copies certificates from, to enable connection into GridFTP server using the specified user. Folder has to be acc$
+        default: "/tmp/gridftp_certs/"
+      gridftp_directory:
+        type: string
+        description: directory where to write data inside the GridFTP server
+        default: "~/gridftp_input/"
     interfaces:
       Standard:
         type: tosca.interfaces.node.lifecycle.Standard
@@ -76,5 +101,5 @@ node_types:
         file: create.yml
       configure:
         type: radon.artifacts.Ansible
-        description: Implementation of the configure life cycle operation
+        description: implementation of the configure operation
         file: configure.yml

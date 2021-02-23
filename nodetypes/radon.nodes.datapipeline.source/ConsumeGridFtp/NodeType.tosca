@@ -2,6 +2,7 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 
 node_types:
   radon.nodes.datapipeline.source.ConsumeGridFtp:
+    derived_from: radon.nodes.datapipeline.source.ConsumeRemote
     metadata:
       targetNamespace: "radon.nodes.datapipeline.source"
       abstract: "false"
@@ -66,6 +67,10 @@ node_types:
                 type: string
                 required: true
                 default: { get_property: [ SELF, intermediate_folder ] }
+              pipeline_id:
+                type: string
+                required: true
+                default: { get_attribute: [ SELF, id ] }
               gridftp_user:
                 type: string
                 required: true
@@ -96,5 +101,5 @@ node_types:
         file: create.yml
       configure:
         type: radon.artifacts.Ansible
-        description: configure life cycle operation implementation script
+        description: implementation of configure operation
         file: configure.yml
