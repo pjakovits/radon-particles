@@ -12,7 +12,7 @@ topology_template:
         displayName: "PublishGridFtp"
       properties:
         gridftp_port: 2811
-        intermediate_folder: "/tmp/nifi_gridftp_subscribe/"
+        intermediate_folder: "/tmp/nifi_gridftp_publish/"
         schedulingStrategy: "EVENT_DRIVEN"
         schedulingPeriodCRON: "* * * * * ?"
         name: "sendTogridFTP"

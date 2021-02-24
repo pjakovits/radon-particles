@@ -21,7 +21,40 @@
     query: "resources[?name=='{{template_name}}' && starts_with(identifier, '/templates/')].identifier"
     
   tasks:
+    - name: Install gridftp client and proxy on Ubuntu
+      become: yes
+      apt:
+        name:
+          - globus-proxy-utils
+          - globus-gass-copy-progs
+          - tree
+        state: present
+        update_cache: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      
 
+    - name: Import a key from a Glubus.org
+      become: yes
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://downloads.globus.org/toolkit/gt6/stable/repo/rpm/RPM-GPG-KEY-Globus
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+      
+    - name: Install gridftp client and proxy on CENTOS
+      become: yes
+      yum:
+        name:
+          - https://downloads.globus.org/toolkit/globus-connect-server/globus-connect-server-repo-latest.noarch.rpm
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+ 
+    - name: Install gridftp client and proxy on CENTOS
+      become: yes
+      yum:
+        name:
+          - globus-gass-copy-progs
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' 
     
     - name: Copy template file to remote system (shell command requires file to be in remote system)
       copy:

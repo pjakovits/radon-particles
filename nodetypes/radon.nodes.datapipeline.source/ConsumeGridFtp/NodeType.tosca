@@ -96,7 +96,7 @@ node_types:
         description: XML template file
         file: GridFTPsubscribe.xml
       create:
-        type: tosca.artifacts.File
+        type: radon.artifacts.Ansible
         description: create operation implementation in Ansible
         file: create.yml
       configure:

@@ -101,5 +101,5 @@ node_types:
         file: create.yml
       configure:
         type: radon.artifacts.Ansible
-        description: implementation of the configure operation
+        description: implementation of configure operation
         file: configure.yml

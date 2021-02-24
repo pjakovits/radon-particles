@@ -20,19 +20,17 @@
   vars: 
     get_id1: "processors[?component.name=='ExecuteProcess'].id" 
     get_id2: "processors[?component.name=='PutFile'].id"  
-    dest_cred_file_path: "~/.globus/"
+    dest_cred_file_path: "/root/"
     proccess_arguments: "-sync -r {{intermediate_folder}} gsiftp://{{gridftp_user}}@{{gridftp_host}}:{{gridftp_port}}/{{gridftp_directory}}"
 
   tasks:
-    - name: create directory for cred file
-      file:
-        path: "{{dest_cred_file_path}}"
-        state: directory
 
-    - name: Upload the credentials file to the current directory. 
+    - name: Upload the certificate files  
       copy:
         src: "{{gridftp_cert_path}}"
         dest: "{{dest_cred_file_path}}"
+        mode: 0600
+      become: yes
       when: gridftp_cert_path != "none" or gridftp_cert_path != "None"
 
 
