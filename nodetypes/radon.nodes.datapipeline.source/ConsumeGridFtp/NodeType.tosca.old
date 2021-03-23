@@ -1,0 +1,100 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+  radon.nodes.datapipeline.source.ConsumeGridFtp:
+    metadata:
+      targetNamespace: "radon.nodes.datapipeline.source"
+      abstract: "false"
+      final: "false"
+    attributes:
+      template_name:
+        description: name of the template
+        type: string
+        default: "GridFTPsubscribe"
+    properties:
+      gridftp_port:
+        type: string
+        description: port of the gridftp server
+        default: 2811
+      intermediate_folder:
+        type: string
+        description: Where the data pipeline server keeps intermediate data. MUST be unique folder.
+        default: "/tmp/nifi_gridftp_subscribe/"
+      gridftp_user:
+        type: string
+        description: user of the gridftp server
+        default: "pelle"
+      gridftp_host:
+        type: string
+        description: hostname of the gridftp server
+        default: "gridftpserver.com"
+      gridftp_cert_path:
+        type: string
+        description: where the orchestrator copies certificates from, to enable connection into GridFTP server using the specified user. Folder has to be accessible by the orchestrator.
+        default: "/tmp/gridftp_certs/"
+      gridftp_directory:
+        type: string
+        description: directory from where to take data inside the GridFTP server
+        default: "~/gridftp_output/"
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          create:
+            description: The standard create operation
+            inputs:
+              template_name:
+                type: string
+                required: true
+                default: { get_attribute: [ SELF, template_name ] }
+              template_file:
+                type: string
+                required: true
+                default: "GridFTPsubscribe.xml"
+            implementation:
+              primary: create
+              dependencies: [ templateFile_localConn ]
+              timeout: 0
+          configure:
+            description: The standard configure operation
+            inputs:
+              gridftp_port:
+                type: string
+                required: true
+                default: { get_property: [ SELF, gridftp_port ] }
+              intermediate_folder:
+                type: string
+                required: true
+                default: { get_property: [ SELF, intermediate_folder ] }
+              gridftp_user:
+                type: string
+                required: true
+                default: { get_property: [ SELF, gridftp_user ] }	
+              gridftp_host:
+                type: string
+                required: true
+                default: { get_property: [ SELF, gridftp_host ] }
+              gridftp_cert_path:
+                type: string
+                required: true
+                default: { get_property: [ SELF, gridftp_cert_path ] }
+              gridftp_directory:
+                type: string
+                required: true
+                default: { get_property: [ SELF, gridftp_directory ] }
+            implementation:
+              primary: configure
+              timeout: 0
+    artifacts:
+      templateFile_localConn:
+        type: tosca.artifacts.File
+        description: XML template file
+        file: GridFTPsubscribe.xml
+      create:
+        type: tosca.artifacts.File
+        description: create operation implementation in Ansible
+        file: create.yml
+      configure:
+        type: radon.artifacts.Ansible
+        description: configure life cycle operation implementation script
+        file: configure.yml
